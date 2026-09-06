@@ -1,0 +1,8 @@
+# Local development dependencies, validation scripts, and trial outputs.
+.generator-dev/
+
+# Python bytecode and operating-system metadata.
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db

@@ -1,0 +1,886 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Generator generation package v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "complete",
+        "provisional",
+        "partial"
+      ]
+    },
+    "normalized_input": {
+      "$ref": "input-schema.json"
+    },
+    "entity_registry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entity_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "character",
+              "scene",
+              "prop",
+              "other"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "asset_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "fixed_traits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "knowledge_status": {
+                  "enum": [
+                    "observed",
+                    "user_provided",
+                    "script",
+                    "assumed",
+                    "unknown"
+                  ]
+                },
+                "evidence_ref": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "description",
+                "knowledge_status",
+                "evidence_ref"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          },
+          "initial_state": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unresolved": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "entity_id",
+          "kind",
+          "name",
+          "aliases",
+          "version",
+          "asset_ids",
+          "fixed_traits",
+          "initial_state",
+          "unresolved"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "scene_registry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scene_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "entity_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "coordinate_system": {
+            "type": "string",
+            "minLength": 1
+          },
+          "layout_basis": {
+            "type": "string",
+            "minLength": 1
+          },
+          "landmarks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "landmark_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "world_position": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "appearance": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "basis": {
+                  "type": "object",
+                  "properties": {
+                    "description": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "knowledge_status": {
+                      "enum": [
+                        "observed",
+                        "user_provided",
+                        "script",
+                        "assumed",
+                        "unknown"
+                      ]
+                    },
+                    "evidence_ref": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "description",
+                    "knowledge_status",
+                    "evidence_ref"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "landmark_id",
+                "name",
+                "world_position",
+                "appearance",
+                "basis"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          },
+          "entrances": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "light_sources": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "unresolved": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "scene_id",
+          "entity_id",
+          "version",
+          "coordinate_system",
+          "layout_basis",
+          "landmarks",
+          "entrances",
+          "light_sources",
+          "unresolved"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "story_beats": {
+      "$ref": "story-beats-schema.json"
+    },
+    "shot_plan": {
+      "$ref": "shot-plan-schema.json"
+    },
+    "continuity_ledger": {
+      "type": "object",
+      "properties": {
+        "states": {
+          "type": "array",
+          "items": {
+            "$ref": "shot-schema.json#/$defs/state"
+          },
+          "minItems": 1
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "shot_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "time": {
+                "type": "number",
+                "minimum": 0
+              },
+              "entity_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 0
+              },
+              "field": {
+                "type": "string",
+                "minLength": 1
+              },
+              "before": {
+                "type": "string",
+                "minLength": 1
+              },
+              "after": {
+                "type": "string",
+                "minLength": 1
+              },
+              "basis": {
+                "enum": [
+                  "script",
+                  "execution_detail",
+                  "transition"
+                ]
+              },
+              "source_beat_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 0
+              }
+            },
+            "required": [
+              "event_id",
+              "shot_id",
+              "time",
+              "entity_ids",
+              "field",
+              "before",
+              "after",
+              "basis",
+              "source_beat_ids"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "states",
+        "events"
+      ],
+      "additionalProperties": false
+    },
+    "shots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "spec": {
+            "$ref": "shot-schema.json"
+          },
+          "storyboard_description": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/textoutput"
+              },
+              {
+                "properties": {
+                  "language": {
+                    "const": "zh-CN"
+                  }
+                }
+              }
+            ]
+          },
+          "image_prompt": {
+            "type": "object",
+            "properties": {
+              "zh_cn": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/textoutput"
+                  },
+                  {
+                    "properties": {
+                      "language": {
+                        "const": "zh-CN"
+                      }
+                    }
+                  }
+                ]
+              },
+              "en": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/textoutput"
+                  },
+                  {
+                    "properties": {
+                      "language": {
+                        "const": "en"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "required": [
+              "zh_cn",
+              "en"
+            ],
+            "additionalProperties": false
+          },
+          "video_prompt": {
+            "type": "object",
+            "properties": {
+              "zh_cn": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/textoutput"
+                  },
+                  {
+                    "properties": {
+                      "language": {
+                        "const": "zh-CN"
+                      }
+                    }
+                  }
+                ]
+              },
+              "en": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/textoutput"
+                  },
+                  {
+                    "properties": {
+                      "language": {
+                        "const": "en"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "required": [
+              "zh_cn",
+              "en"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "spec",
+          "storyboard_description",
+          "image_prompt",
+          "video_prompt"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "$ref": "input-schema.json#/$defs/assumption"
+      },
+      "minItems": 0
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "issue_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scope_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "resolution": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unresolved": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "issue_id",
+          "scope_ids",
+          "description",
+          "resolution",
+          "unresolved"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "covered_beat_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "remaining_beat_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "next_shot_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "resume_instructions": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "covered_beat_ids",
+        "remaining_beat_ids",
+        "next_shot_id",
+        "resume_instructions"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "project_id",
+    "status",
+    "normalized_input",
+    "entity_registry",
+    "scene_registry",
+    "story_beats",
+    "shot_plan",
+    "continuity_ledger",
+    "shots",
+    "assumptions",
+    "issues",
+    "coverage"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "entity": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "character",
+            "scene",
+            "prop",
+            "other"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "asset_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "fixed_traits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "minLength": 1
+              },
+              "knowledge_status": {
+                "enum": [
+                  "observed",
+                  "user_provided",
+                  "script",
+                  "assumed",
+                  "unknown"
+                ]
+              },
+              "evidence_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "description",
+              "knowledge_status",
+              "evidence_ref"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        },
+        "initial_state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unresolved": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "entity_id",
+        "kind",
+        "name",
+        "aliases",
+        "version",
+        "asset_ids",
+        "fixed_traits",
+        "initial_state",
+        "unresolved"
+      ],
+      "additionalProperties": false
+    },
+    "scene": {
+      "type": "object",
+      "properties": {
+        "scene_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "coordinate_system": {
+          "type": "string",
+          "minLength": 1
+        },
+        "layout_basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "landmarks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "landmark_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "world_position": {
+                "type": "string",
+                "minLength": 1
+              },
+              "appearance": {
+                "type": "string",
+                "minLength": 1
+              },
+              "basis": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "knowledge_status": {
+                    "enum": [
+                      "observed",
+                      "user_provided",
+                      "script",
+                      "assumed",
+                      "unknown"
+                    ]
+                  },
+                  "evidence_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "description",
+                  "knowledge_status",
+                  "evidence_ref"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "landmark_id",
+              "name",
+              "world_position",
+              "appearance",
+              "basis"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        },
+        "entrances": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "light_sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "unresolved": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "scene_id",
+        "entity_id",
+        "version",
+        "coordinate_system",
+        "layout_basis",
+        "landmarks",
+        "entrances",
+        "light_sources",
+        "unresolved"
+      ],
+      "additionalProperties": false
+    },
+    "event": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shot_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "time": {
+          "type": "number",
+          "minimum": 0
+        },
+        "entity_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "before": {
+          "type": "string",
+          "minLength": 1
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1
+        },
+        "basis": {
+          "enum": [
+            "script",
+            "execution_detail",
+            "transition"
+          ]
+        },
+        "source_beat_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "event_id",
+        "shot_id",
+        "time",
+        "entity_ids",
+        "field",
+        "before",
+        "after",
+        "basis",
+        "source_beat_ids"
+      ],
+      "additionalProperties": false
+    },
+    "textoutput": {
+      "type": "object",
+      "properties": {
+        "shot_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "spec_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "language": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "spec_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "shot_id",
+        "spec_version",
+        "language",
+        "text",
+        "spec_paths"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

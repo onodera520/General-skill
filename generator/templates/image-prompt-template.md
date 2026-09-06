@@ -1,0 +1,27 @@
+# Universal Image Prompt 模板
+
+输入只读：Shot Spec 的 storyboard_keyframe、asset_bindings、environment 与适用于该帧的 must_have／must_not_have。按 [转写规则](../references/prompt-building.md) 映射；中文与英文分别是完整的可复制正文，不混用占位符。
+
+## 中文正文顺序
+
+1. 指定关键帧实际景别、机位高度／位置、观看方向、焦点与景深。
+2. 描述可见主体及固定外观，逐人明确画面位置、前中后景、身体朝向、视线、姿态、左右手动作和持物。
+3. 明确人物之间与地标之间的空间关系、遮挡以及前中后景组织。
+4. 描述该时刻环境、道具状态、光线来源与方向、光质及色彩关系。
+5. 描述构图重点与 Spec 已有风格；落实必须可见的具体细节。
+6. 用自然语言列出本帧禁止出现的内容。
+
+## English body order
+
+1. Shot size, camera position and height, viewing direction, focus and depth of field at the selected instant.
+2. Visible subjects with stable appearance; screen placement, depth, body orientation, gaze, pose, each relevant hand and held object.
+3. Spatial relationships, foreground/midground/background, and occlusion.
+4. Environment and prop state at this instant; light source, direction, quality and color relationships.
+5. Composition priorities and already specified style; required visible details.
+6. Explicit natural-language exclusions applicable to this frame.
+
+## 示例：仅说明时态转换
+
+Spec：4 秒交接；0.5 秒关键帧时钥匙仍在林川右手，1–2 秒才交到阿岚左手。
+
+中文应描述“红钥匙仍由林川右手握住，阿岚左手空着”；英文对应 “The single red key remains in Lin Chuan's right hand; A Lan's left hand is empty.” 不写“随后交出”，不让图中两人都拿一把钥匙。此例不是完整 Prompt，真实输出须覆盖上述适用字段。

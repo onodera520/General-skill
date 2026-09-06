@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Generator shot plan v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "shots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "shot_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scene_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "beat_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
+          "narrative_purpose": {
+            "type": "string",
+            "minLength": 1
+          },
+          "duration": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "boundary_reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "transition_to_next": {
+            "type": "string",
+            "minLength": 1
+          },
+          "coverage_notes": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "shot_id",
+          "scene_id",
+          "beat_ids",
+          "narrative_purpose",
+          "duration",
+          "boundary_reason",
+          "transition_to_next",
+          "coverage_notes"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "project_id",
+    "shots"
+  ],
+  "additionalProperties": false
+}

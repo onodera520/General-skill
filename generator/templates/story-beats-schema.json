@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Generator story beats v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "beats": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "beat_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scene_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "enum": [
+              "action",
+              "dialogue",
+              "reaction",
+              "reveal",
+              "environment_change",
+              "transition"
+            ]
+          },
+          "subject_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "action": {
+            "type": "string",
+            "minLength": 1
+          },
+          "object_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "state_before": {
+            "type": "string",
+            "minLength": 1
+          },
+          "state_after": {
+            "type": "string",
+            "minLength": 1
+          },
+          "dialogue": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "emotion": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "required_visual_information": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          },
+          "narrative_priority": {
+            "enum": [
+              "essential",
+              "supporting"
+            ]
+          },
+          "source": {
+            "$ref": "input-schema.json#/$defs/source"
+          },
+          "temporal_relations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "related_beat_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "relation": {
+                  "enum": [
+                    "before",
+                    "after",
+                    "overlaps",
+                    "simultaneous"
+                  ]
+                },
+                "basis": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "related_beat_id",
+                "relation",
+                "basis"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          },
+          "inherited_camera_requirements": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 0
+          }
+        },
+        "required": [
+          "beat_id",
+          "scene_id",
+          "type",
+          "subject_ids",
+          "action",
+          "object_ids",
+          "state_before",
+          "state_after",
+          "dialogue",
+          "emotion",
+          "required_visual_information",
+          "narrative_priority",
+          "source",
+          "temporal_relations",
+          "inherited_camera_requirements"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "project_id",
+    "beats"
+  ],
+  "additionalProperties": false
+}
