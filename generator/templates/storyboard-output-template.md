@@ -4,7 +4,7 @@
 
 ## 项目概览
 
-项目：<project_id>；交付状态：<status>；语言：中文分镜＋中英双语提示词。
+项目：<project_id>；交付状态：<status>；语言：中文分镜＋中文图像／视频提示词。
 
 列出场次、风格／画幅决策、实体与资产版本、场景世界坐标和关键地标；列出影响执行的假设或缺失资产。给出 Beat→Shot 覆盖摘要；完整 Beats、Plan、状态和事件保存在生成包。
 
@@ -34,30 +34,18 @@
 
 ### Image Prompt · 中文
 
-关键帧：<time> 秒，<role>；Spec v<spec_version>。参考资产：<绑定清单，放在正文之外>。
+分镜参考图：图<N>（本镜 Image Prompt 对应图号，N 沿用 Shot Plan 全局镜头顺序）；镜头：<shot_id>。关键帧：<time> 秒，<role>；Spec v<spec_version>。参考资产：<绑定清单，放在正文之外>。
 
 ```text
 <image_prompt.zh_cn.text>
 ```
 
-### Image Prompt · English
-
-```text
-<image_prompt.en.text>
-```
-
 ### Video Prompt · 中文
 
-时长：<duration> 秒；描述从镜头实际起点到终点。中途代表帧不作为完整视频的默认首帧。
+正文首行的分镜参考图号必须与本镜 Image Prompt 上方图号一致，且 shot_id、spec_version 与关键帧一致。时长：<duration> 秒；描述从镜头实际起点到终点。中途代表帧不作为完整视频的默认首帧。
 
 ```text
 <video_prompt.zh_cn.text>
 ```
 
-### Video Prompt · English
-
-```text
-<video_prompt.en.text>
-```
-
-对所有镜头重复上述部分；不因镜数增加而省略字段或语言版本。末尾如为 partial，明确剩余 Beat、next_shot_id 和续批输入，不将其标为完成。
+对所有镜头重复上述部分；不因镜数增加而省略字段。末尾如为 partial，明确剩余 Beat、next_shot_id 和续批输入，不将其标为完成。

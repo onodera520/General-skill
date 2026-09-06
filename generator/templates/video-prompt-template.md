@@ -1,21 +1,27 @@
 # Video Prompt 模板
 
-输入只读：Spec 起始摄影字段、入口／出口状态、action_design、camera_movement、lighting、asset_bindings 和视频约束。按 [转写规则](../references/prompt-building.md) 生成同义的中英正文。
+输入只读：Spec 起始摄影字段、入口／出口状态、action_design、camera_movement、environment、lighting、asset_bindings 和视频约束。按 [转写规则](../references/prompt-building.md) 只生成中文正文。
 
-## 中文正文顺序
+## 正文格式
 
-1. 镜头时长、起始景别与机位、环境及光源；逐人交代稳定外观、起始位置、朝向、姿态和持物。
-2. 按 Spec 的相对秒数描述动作阶段、对白、接触／释放和状态变化；并行动作明确“同时”，手别按角色自身。
-3. 对齐同一秒轴说明摄像机起止、路径、速度、稳定程度和焦点变化；固定镜头明确全程固定。
-4. 说明结束时人物位置、持物、衣物、道具及环境状态，承接下镜所需信息。
-5. 指明全程保持的身份／场景特征与有意发生的变化；落实必须发生和禁止出现的内容。
+每镜使用以下四行，镜与镜之间空一行；花括号为待替换变量，音效的尖括号保留。直接换行，不输出行尾反斜杠。正文与生成包中的 video_prompt.zh_cn.text 一致，适合逐镜复制。
 
-## English body order
+```text
+【分镜参考图】图{N}（对应镜头{N}的 Image Prompt；关键帧{time}s，{role}）
+镜头{N}，【时长】{duration}s，【镜头设计】{景别，固定或运镜方式，机位高度、角度与摄影方向，拍摄对象；必要的分段运镜与焦点变化}。
+【镜头内容】{场景、构图层次、可见人物外观与起始状态；按时间顺序写具体动作、表情、对白、光线与道具变化；结束状态及本镜持续约束}。
+【音效】<{已指定的音效、声源、起止时间与变化；或未指定；或明确无音效}>
+```
 
-1. Duration, starting shot size and camera, environment and lighting; stable appearances and initial positions, orientations, poses and prop ownership.
-2. Timestamped action phases, original dialogue, contact/release and state changes. Preserve simultaneity and anatomical hand identity.
-3. Camera trajectory, speed, stability and focus changes on the same time axis. State when the camera is locked.
-4. End positions, prop ownership, wardrobe and environment states needed for the next cut.
-5. Persistent identity/layout constraints, intentional changes, required events and exclusions.
+N 按 Shot Plan 全局镜头顺序填写，续批沿用；只读 Spec 未给全局序号时按其提供顺序编号，并在正文外说明编号对应的 shot_id 与 spec_version。时长直接来自 Spec，可用小数，不照抄示例的 2s。
 
-中英两版均保留剧本对白原文，不能让角色改说另一种语言。不开列软件配置，不新增音效或配乐。文字中的“开始”必须是镜头真实 t=0，不是中途代表帧。示例：0–1 秒保持持钥匙起态，1–2 秒右手到另一人的左手交接，2–4 秒承接者握紧、原持有人手空；不得重新播放递出动作或在视频末尾自动复原道具。
+【分镜参考图】与本镜 Image Prompt 复用同一图号，按 shot_id + spec_version 一一对应，时间与用途来自同一 Spec 的 storyboard_keyframe.time／role（中文写起始帧、代表帧或结束帧）。图号为逻辑对应标识，不表示实际图片已生成；仅在已提供可核实图片时使用其真实文件名或引用，不能虚构路径。中途代表帧或结束帧用于视觉参考，不因此作为视频默认首帧。只读转写未提供配套 Image Prompt 或关键帧时，注释写“【分镜参考图】待提供（本镜缺少配套 Image Prompt／关键帧）”，按实际缺项说明，不虚构已完成的对应关系。完整生成流程应先完成本镜 Image Prompt 再建立该对应；发现跨镜错绑、版本或关键帧不一致时先解决对应问题，不将其标为已配对。
+
+## 字段填写
+
+- 【镜头设计】：写起始景别、机位、摄影方向和对象；固定镜头明确“全程固定”。运动镜头把路径、速度、稳定程度和焦点变化放在同一秒轴上，不能用中途关键帧替换真实 t=0 机位。
+- 【镜头内容】：详细写清前中后景和遮挡、人物固定外观、位置、朝向、视线、姿态及持物，再按 Spec 秒数展开动作阶段和可见表情。并行动作写“同时”，交接保留双方角色自身左右手、接触与释放过程；对白带说话者、原文及发生时刻写在此处。写明场景地标、道具数量与状态、光源方向和可见效果、镜尾状态，以及适用的视频 must_have／must_not_have。不要求没有人物的镜头编造表情，也不为“详细”增加 Spec 没有的天气、物件或动作。
+- 抽象情绪使用 [调度规则](../references/blocking-and-staging.md) 已写入 Spec 的可见表现，描述实际身体动作、面部变化、视线、停顿与速度；不能只写“无助”“紧张”“悲伤”作为执行内容。表现可轻可重，应符合具体剧情，不能把某个情绪固定等同于某个姿势。
+- 【音效】：仅从 Spec 明确的声音说明转写，持续环境声可在 environment.atmosphere 记录声源与时间，事件音效在对应 action_design.description／delivery 中记录。声音有变化时保留时间与动作同步。未提供音效写 `<未指定>`，明确要求无音效才写 `<无音效>`；“无音效”不自动删除已指定对白。没有依据的音乐、脚步或冷柜声不得补入。
+
+画幅、风格等已指定视觉要求自然纳入相应字段，禁止专属模型参数。三个字段内保留完整起止状态与约束，不另加“技术备注”代替可复制正文中的关键内容。

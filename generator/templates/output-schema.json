@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Generator generation package v1",
+  "title": "Generator generation package v1.1",
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "1.0"
+      "const": "1.1"
     },
     "project_id": {
       "type": "string",
@@ -376,25 +376,10 @@
                     }
                   }
                 ]
-              },
-              "en": {
-                "allOf": [
-                  {
-                    "$ref": "#/$defs/textoutput"
-                  },
-                  {
-                    "properties": {
-                      "language": {
-                        "const": "en"
-                      }
-                    }
-                  }
-                ]
               }
             },
             "required": [
-              "zh_cn",
-              "en"
+              "zh_cn"
             ],
             "additionalProperties": false
           },
@@ -414,25 +399,10 @@
                     }
                   }
                 ]
-              },
-              "en": {
-                "allOf": [
-                  {
-                    "$ref": "#/$defs/textoutput"
-                  },
-                  {
-                    "properties": {
-                      "language": {
-                        "const": "en"
-                      }
-                    }
-                  }
-                ]
               }
             },
             "required": [
-              "zh_cn",
-              "en"
+              "zh_cn"
             ],
             "additionalProperties": false
           }

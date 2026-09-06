@@ -820,7 +820,8 @@
               },
               "facing": {
                 "type": "string",
-                "minLength": 1
+                "minLength": 1,
+                "description": "保留身体的世界朝向，并明确相对于本关键帧镜头呈正面、侧面、背面或四分之三正面／背面；头脸与身体朝向不一致时分别说明。由调度阶段依据该时刻人物位置、朝向和实际机位确定，供Image Prompt逐人转写。"
               },
               "gaze": {
                 "type": "string",

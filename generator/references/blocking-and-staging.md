@@ -6,7 +6,7 @@
 
 - world_position：相对固定地标的位置，角色在镜间物理连续性的依据。
 - screen_position／depth：当前摄像机下的画面投影；按观众视角定义左右与前中后景。
-- facing／gaze：身体朝向和眼睛的目标分别记录。看门不要求身体已经转向门，转头也不等于整个人换位。
+- facing／gaze：身体朝向和眼睛的目标分别记录。看门不要求身体已经转向门，转头也不等于整个人换位。对关键帧中的每个可见人物，调度阶段根据该时刻的人物位置、身体朝向和实际机位，在 storyboard_keyframe.blocking[].facing 中保留世界朝向，并明确相对于镜头呈正面、侧面、背面或四分之三正面／背面；头脸与身体朝向不一致时分别说明。相机运动时使用关键帧机位，不沿用起始机位；此补充不改变状态账本的世界朝向。
 
 每人填写镜头开始和结束 placement、movement_path。画面占比用 frame_height_fraction 表示设计估计，范围 0..1；出画者用 null，depth=offscreen，不胡写可见占比。occlusion 指明被谁或什么遮挡、遮哪部分；关键动作参与手部不能被肩膀、桌沿或其他角色挡住。
 
@@ -17,6 +17,8 @@
 action_design 为每个动作给出镜内 start/end 秒、主体、对象、接触、路径、前后状态、depends_on 和 overlaps_with。对白另用 kind=dialogue，原文放 dialogue，delivery 描述说话者／画内外和语速。没有对白用 null。
 
 起止秒数非负且 start < end <= duration。静止、停顿也可作为执行阶段，避免时间空洞导致模型无依据乱动。depends_on 指必须完成的前置 action_id；并行动作用 overlaps_with，且区间真实相交。不能同时把一个动作设为另一个的已完成前置与重叠动作。
+
+将剧本中有依据的抽象情绪落实为当前景别可见的表情、视线、姿态或动作节奏，写入 action_design.description、状态与 placement.pose／gaze；注明属于设计的 execution_detail。例如“无助”可根据情境设计为“肩膀下垂，抬眼看向对方，嘴唇张开又合上”，不是固定要求跪地或双手抱头。表现强度、占用的手、身体姿态、用时及前后状态须与剧情和持物一致，不新增伤势、哭喊或无依据的大幅动作。Prompt Builder 只转写这些已定稿的可见表现。
 
 故事动作标 story_action，服务执行的开门、让路、调整握持标 execution_detail。执行细节挂到相关 beat_ids，不新增冲突剧情。重要状态改变另登记 ledger.events；同一事件跨镜时只发生一次。
 
