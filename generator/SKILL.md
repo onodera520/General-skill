@@ -21,15 +21,31 @@ Clip 是一次视频生成片段，可含多个 Shot／场景；Shot 仍是具�
 
 默认中文分镜描述，Image Prompt 和智能镜头 Prompt 均只提供可独立复制的中文正文；时长由动作与对白规划，画幅采用用户指定值，未指定时自主选择并记为假设。风格优先遵循用户要求及可用资产。镜头数量不设固定公式。不虚构实测尺寸、人物背景或图中不可见的细节。
 
-## 按阶段读取与执行
+## 按需读取路由
 
-1. 读 [剧本解析](references/screenplay-parsing.md) 与 [资产绑定](references/asset-binding.md)，归一化输入、建立实体／场景档案并产出 [Story Beats](templates/story-beats-schema.json)，区分原台词、已有旁白及动作／心理叙述。
-2. 读 [时间线与声音](references/timing-and-audio.md)，最小可视化补全，记录原文、先后／并行关系及最短可理解估时，定稿 [timeline](templates/timeline-schema.json)。补充不新增时长；NPC仅在明确存在群体时补全。
-3. 读 [Clip分组](references/clip-planning.md)，按既定时间线先定 [Clip Plan](templates/clip-plan-schema.json) 边界，优先10–15秒，紧密因果完整优先；不能为了片长反向调整估时。
-4. 读 [镜头规划](references/shot-planning.md)、[连续性](references/continuity.md)，再依次读 [摄影语言](references/cinematic-language.md)、[人物调度](references/blocking-and-staging.md)、[构图](references/composition.md)、[光色](references/lighting-and-color.md)、[运镜](references/camera-movement.md)。在固定Clip区间内产出 [Shot Plan](templates/shot-plan-schema.json) 和 [Shot Spec](templates/shot-schema.json)，补齐Clip的Shot／声音区间、场景入口状态及全局补充。
-5. 核对剧情覆盖、时间总量、不可拆因果、跨镜声音、场景入口全员站位、续接单人首镜、轴线、视线和状态链；定稿Clip版本与Shot版本。这是设计规范校验，不是媒体审查。
-6. 读 [Prompt转写](references/prompt-building.md)，按 [MD模板](templates/storyboard-output-template.md)、[Image Prompt](templates/image-prompt-template.md)、[智能镜头 Prompt](templates/video-prompt-template.md) 输出中文。图像绑定shot_id+spec_version，视频绑定clip_id+clip_version及所引用Shot版本；不在转写时重新设计。
+先判断本次需要新建或修改哪些设计层，只读取作出这些决定所需的 reference；不要为了熟悉整个 Skill 预读全部文件。某项条件不明确、输入存在冲突或该规则会影响最终设计时，读取对应文件后再决定。已定稿的上游数据可直接复用，不因下游转写而重新加载其设计规则。
 
+- 从原始剧本新建或修改 Story Beats 时读 [剧本解析](references/screenplay-parsing.md)；仅转写已定稿 Shot／Clip 时不读。
+- 输入含视觉资产，或需要建立、变更、核对人物／场景／道具的稳定身份与版本时读 [资产绑定](references/asset-binding.md)；只读转写且绑定已定稿、无资产冲突时不重读。
+- 需要估时、最小可视化补全、台词／旁白／音效安排或修改先后／并行关系时读 [时间线与声音](references/timing-and-audio.md)；完整生成通常需要，固定时间线的纯转写可跳过。
+- 需要新建或调整 Clip 边界、例外、场景入口或声音跨 Clip 分配时读 [Clip分组](references/clip-planning.md)；用户已提供定稿单 Clip 及完整区间时不重读。
+- 需要新增、删除、拆分、合并镜头，或修改镜头目的与时长时读 [镜头规划](references/shot-planning.md)。
+- 存在两个及以上镜头、重复人物／场景／道具、动作跨镜、正反打、出入画、场景返回或跨 Clip 状态时读 [连续性](references/continuity.md)；单个无人物、无状态变化的独立物件／环境镜头可跳过。
+- 需要选择或改变景别、机位高度／位置、摄影方向、轴线或镜头视角关系时读 [摄影语言](references/cinematic-language.md)；这些项目已定稿的纯转写不读。
+- 画面有人物／NPC，或涉及站位、身体与头脸朝向、视线、姿态、动作、持物、交接、遮挡时读 [人物调度](references/blocking-and-staging.md)；完全无人镜头可跳过。
+- 涉及多人、多层前中后景、关键遮挡、空间揭示、复杂道具关系，或用户明确要求特殊构图时读 [构图](references/composition.md)；构图已定稿的简单单主体纯转写可跳过。
+- 需要设计或改变光源、时段、天气、曝光、色彩、跨视角光线连续性，或用户明确提出光色风格时读 [光色](references/lighting-and-color.md)；静态光线已由定稿 Spec 完整规定的纯转写不读。
+- 只在存在或需要决定推、拉、摇、移、跟、升降、环绕、手持、变焦、焦点转移、一镜到底或运动衔接时读 [运镜](references/camera-movement.md)；全部固定且无焦点变化时不读。
+- 需要生成或修改详细镜头描述、Image Prompt、智能镜头 Prompt 或 Markdown 时读 [Prompt转写](references/prompt-building.md) 及对应模板；只做上游规划而不交付正文时暂不读。
+
+## 按阶段执行
+
+1. 按路由完成输入归一化、资产档案与 [Story Beats](templates/story-beats-schema.json)，区分原台词、已有旁白及动作／心理叙述。
+2. 需要时间线设计时，记录原文、先后／并行关系及最短可理解估时，定稿 [timeline](templates/timeline-schema.json)。补充不新增时长；NPC仅在明确存在群体时补全。
+3. 需要 Clip 设计时，按既定时间线定稿 [Clip Plan](templates/clip-plan-schema.json) 边界，优先10–15秒，紧密因果完整优先；不能为了片长反向调整估时。
+4. 在固定 Clip 区间内产出或修订 [Shot Plan](templates/shot-plan-schema.json) 和 [Shot Spec](templates/shot-schema.json)，补齐 Clip 的 Shot／声音区间、场景入口状态及全局补充。只读取本次镜头实际触发的摄影专题规则。
+5. 核对剧情覆盖、时间总量、不可拆因果、跨镜声音，以及本次内容实际涉及的场景入口、轴线、视线、人物和道具状态链；定稿 Clip 版本与 Shot 版本。这是设计规范校验，不是媒体审查。
+6. 需要交付正文时，按 [MD模板](templates/storyboard-output-template.md)、[Image Prompt](templates/image-prompt-template.md)、[智能镜头 Prompt](templates/video-prompt-template.md) 输出中文。图像绑定 shot_id+spec_version，视频绑定 clip_id+clip_version 及所引用 Shot 版本；不在转写时重新设计。
 ## 全局一致性与异常
 
 世界位置使用固定场景地标／坐标；画面左右按观众视角，手别按角色自身。反打改变投影，不改变场景布局。裁切、遮挡、离画不等于实体、服装或持物状态消失。人物身份与固定外观从同一版本档案读取；已清晰绑定角色资产时，三项正文仅声明严格继承对应资产图，不重复罗列固定外貌与服装特征，按 [资产绑定](references/asset-binding.md) 描述本镜动作、表情、朝向、遮挡与物体关系。脱衣、受伤、交接等变化需状态事件依据。
