@@ -47,4 +47,6 @@ transition.kind 区分 continuous、time_ellipsis、scene_change、flashback、p
 
 引用存在且类型对应；事件时间、动作／运镜区间、关键帧均在 0..duration 内；先后依赖不成环；接触／释放符合时间；角色不能无路径瞬移；一件道具不无依据同时在两处；门窗、桌子与光源不随机换位；关键帧状态与时序一致。
 
+Clip 边界继续使用同一状态链，依据 [Clip 分组](clip-planning.md) 检查场景入口全部在场人物、单人首镜和声音不重复。必要承接状态可重述，已发生事件不能重播；闪回和换场仍按对应时空处理。
+
 这些跨记录语义不能仅靠 JSON Schema 证明。发现问题由拥有该决策的设计阶段修复；不调用 Reviewer，不生成或验收媒体。未消解输入冲突保留 provisional 与具体 issues，不无限循环修订，也不隐瞒冲突。

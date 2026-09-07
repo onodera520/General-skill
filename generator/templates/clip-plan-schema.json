@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Generator Clip plan v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timeline_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "clips": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/clip"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "project_id",
+    "timeline_version",
+    "clips"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "clip": {
+      "type": "object",
+      "properties": {
+        "clip_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clip_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "clip_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "status": {
+          "enum": [
+            "final",
+            "provisional"
+          ]
+        },
+        "start": {
+          "type": "number",
+          "minimum": 0
+        },
+        "end": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "duration": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "shot_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "shot_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "spec_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "start": {
+                "type": "number",
+                "minimum": 0
+              },
+              "end": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "shot_id",
+              "spec_version",
+              "start",
+              "end"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "audio_spans": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "audio_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "start": {
+                "type": "number",
+                "minimum": 0
+              },
+              "end": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "text_start": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "text_end": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "audio_id",
+              "start",
+              "end",
+              "text_start",
+              "text_end"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        },
+        "scene_entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scene_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "time": {
+                "type": "number",
+                "minimum": 0
+              },
+              "state_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "present_character_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 0,
+                "uniqueItems": true
+              },
+              "staging": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "scene_id",
+              "time",
+              "state_id",
+              "present_character_ids",
+              "staging"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "exception": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "short_total",
+                    "short_tail",
+                    "causal_overrun",
+                    "conflict"
+                  ]
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "group_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0,
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "kind",
+                "reason",
+                "group_ids"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "visual_style": {
+          "type": "string",
+          "minLength": 1
+        },
+        "global_details": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "clip_id",
+        "clip_number",
+        "clip_version",
+        "status",
+        "start",
+        "end",
+        "duration",
+        "shot_spans",
+        "audio_spans",
+        "scene_entries",
+        "exception",
+        "visual_style",
+        "global_details"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

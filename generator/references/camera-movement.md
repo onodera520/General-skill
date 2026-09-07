@@ -20,4 +20,4 @@
 
 state 从入口状态和截止该时间的事件推导，camera_state 从运动轨迹推导，blocking／composition 从该状态与机位投影得到。关键帧不必总选起始帧；若选中途代表帧，明确不能直接作为完整 Video Prompt 的首帧输入。
 
-Video Prompt 默认描述完整镜头，起点来自顶层摄影字段和 entry_state，终点来自最后运动段和 exit_state。未来用户明确需要“从代表帧续拍”时，返回设计阶段新建或修订区间与 Spec，再转写；Prompt Builder 不能自行截掉前半段。
+Clip Video Prompt 按 shot_spans 描述所有镜头；每个 Shot 起点来自顶层摄影字段和 entry_state，终点来自最后运动段和 exit_state，镜内时间加上 Clip 偏移量。未来用户明确需要“从代表帧续拍”时，返回设计阶段新建或修订区间与 Spec，再转写；Prompt Builder 不能自行截掉前半段。

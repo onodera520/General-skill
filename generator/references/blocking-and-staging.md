@@ -14,7 +14,7 @@
 
 ## 动作时间线
 
-action_design 为每个动作给出镜内 start/end 秒、主体、对象、接触、路径、前后状态、depends_on 和 overlaps_with。对白另用 kind=dialogue，原文放 dialogue，delivery 描述说话者／画内外和语速。没有对白用 null。
+action_design 为每个动作给出镜内 start/end 秒、主体、对象、接触、路径、前后状态、depends_on 和 overlaps_with。对白另用 kind=dialogue，原文放 dialogue，delivery 描述说话者／画内外和语速。没有本镜对白用 null。跨 Shot 的连续声音以 timeline.audio_events 为唯一播放来源，Clip audio_spans 引用原文区间；本字段可描述本镜说话表演，不能让跨镜同一句播放多次。
 
 起止秒数非负且 start < end <= duration。静止、停顿也可作为执行阶段，避免时间空洞导致模型无依据乱动。depends_on 指必须完成的前置 action_id；并行动作用 overlaps_with，且区间真实相交。不能同时把一个动作设为另一个的已完成前置与重叠动作。
 
@@ -30,4 +30,4 @@ action_design 为每个动作给出镜内 start/end 秒、主体、对象、接�
 
 人物离画后沿世界路径继续，角色再次入画必须能从先前位置到达。路径避开固定障碍，不能穿过桌子、封闭门或彼此身体。相机移动造成的屏幕位移不写成角色移动。
 
-关键帧 placement 从该时刻的动作阶段推导，不把起始 standing 姿态套到结束 walking 状态。提交 [构图](composition.md) 统合前中后景和视觉焦点。
+关键帧 placement 从该时刻的动作阶段推导，不把起始 standing 姿态套到结束 walking 状态。提交 [构图](composition.md) 统合前中后景和视觉焦点。Clip 的 scene_entries 另记录全部在场人物静态起态；严禁直视镜头，互动人物不能全部正面朝镜头。画外人物仍在场但不强行入画。

@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Generator generation package v1.1",
+  "title": "Generator generation package v2",
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "1.1"
+      "const": "2.0"
     },
     "project_id": {
       "type": "string",
@@ -382,36 +382,12 @@
               "zh_cn"
             ],
             "additionalProperties": false
-          },
-          "video_prompt": {
-            "type": "object",
-            "properties": {
-              "zh_cn": {
-                "allOf": [
-                  {
-                    "$ref": "#/$defs/textoutput"
-                  },
-                  {
-                    "properties": {
-                      "language": {
-                        "const": "zh-CN"
-                      }
-                    }
-                  }
-                ]
-              }
-            },
-            "required": [
-              "zh_cn"
-            ],
-            "additionalProperties": false
           }
         },
         "required": [
           "spec",
           "storyboard_description",
-          "image_prompt",
-          "video_prompt"
+          "image_prompt"
         ],
         "additionalProperties": false
       },
@@ -504,15 +480,68 @@
               "type": "null"
             }
           ]
+        },
+        "next_clip_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
         "covered_beat_ids",
         "remaining_beat_ids",
         "next_shot_id",
-        "resume_instructions"
+        "resume_instructions",
+        "next_clip_id"
       ],
       "additionalProperties": false
+    },
+    "timeline": {
+      "$ref": "timeline-schema.json"
+    },
+    "clip_plan": {
+      "$ref": "clip-plan-schema.json"
+    },
+    "clips": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "clip_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clip_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "video_prompt": {
+            "type": "object",
+            "properties": {
+              "zh_cn": {
+                "$ref": "#/$defs/cliptextoutput"
+              }
+            },
+            "required": [
+              "zh_cn"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "clip_id",
+          "clip_version",
+          "video_prompt"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
     }
   },
   "required": [
@@ -528,7 +557,10 @@
     "shots",
     "assumptions",
     "issues",
-    "coverage"
+    "coverage",
+    "timeline",
+    "clip_plan",
+    "clips"
   ],
   "additionalProperties": false,
   "$defs": {
@@ -849,6 +881,66 @@
         "language",
         "text",
         "spec_paths"
+      ],
+      "additionalProperties": false
+    },
+    "cliptextoutput": {
+      "type": "object",
+      "properties": {
+        "clip_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clip_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "language": {
+          "const": "zh-CN"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_shots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "shot_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "spec_version": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "shot_id",
+              "spec_version"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "source_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "clip_id",
+        "clip_version",
+        "language",
+        "text",
+        "source_shots",
+        "source_paths"
       ],
       "additionalProperties": false
     }

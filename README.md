@@ -1,6 +1,6 @@
 # Smart Storyboard Generator
 
-`generator` 是一个面向 Codex 的分镜设计 Skill。它将剧本和角色、场景、道具等视觉资产，转化为可执行的逐镜设计与中文生成提示词。当前输出契约版本为 `1.1`。
+`generator` 是一个面向 Codex 的分镜与短片片段设计 Skill。它将剧本、声音／时序信息和角色、场景、道具等视觉资产，转化为可执行的 Clip、逐镜设计与中文生成提示词。当前结构化生成包版本为 `2.0`。
 
 ## 输出内容
 
@@ -8,8 +8,9 @@
 
 - 高精度 Shot Spec：景别、机位、摄影方向、构图、前中后景、Blocking、动作时序、环境、道具、光线、运镜与连续性。
 - 中文详细分镜描述。
-- Universal Image Prompt：中文版本，严格对应一个指定关键帧。
-- Video Prompt：中文版本，描述镜头起止状态、动作时序、摄影机运动和必要音效。
+- Universal Image Prompt：每个 Shot 一份中文版本，严格对应一个指定关键帧。
+- 智能镜头 Prompt：每个 Clip 一份中文版本，按镜头顺序描述时长、动作时序、摄影机运动和必要音效。
+- 可选结构化生成包：包含冻结时间线、Clip Plan、Shot Spec、跨镜状态和来源版本绑定。
 
 它只负责设计镜头与转写提示词，不生成或验收图片、视频。
 
@@ -18,16 +19,24 @@
 ```text
 剧本 + 视觉资产
         ↓
-Story Beats
+Story Beats + 声音／时序
         ↓
-Shot Planning
+最短可理解时间线
         ↓
-Shot Spec 定稿
+Clip Plan
         ↓
-分镜描述 + Image Prompt + Video Prompt
+Clip 内 Shot Planning 与 Shot Spec 定稿
+        ↓
+分镜描述 + Image Prompt + 智能镜头 Prompt
 ```
 
-Prompt Builder 只从已定稿的 Shot Spec 转写，不能改变景别、构图、人物位置、手别、动作、光线或运镜。所有文字输出都绑定 `shot_id + spec_version`；发现冲突时必须回到 Shot Spec 修订，不能在提示词中自行改拍法。
+Prompt Builder 只从已定稿的时间线、Clip 设计和 Shot Spec 转写，不能改变景别、构图、人物位置、手别、动作、光线、运镜或时序。Image Prompt 和分镜描述绑定 `shot_id + spec_version`；智能镜头 Prompt 绑定 `clip_id + clip_version` 及其来源 Shot 版本。发现冲突时必须回到设计阶段修订，不能在提示词中自行改拍法。
+
+## Clip 与时间线
+
+Clip 是一次视频生成片段，可以包含多个 Shot 或多个场景。默认优先规划 10–15 秒的因果完整片段，并在固定 Clip 内使用有叙事作用的短镜头；单镜通常为 0.5–2 秒，必要的长镜和不可拆的因果段会记录原因。总时长由原剧本动作、对白、旁白和音效估算决定，不能为了凑片长添加剧情或拉伸声音。
+
+内部时间线记录原文、先后／并行关系、对白区间、声音事件、不可拆分组和每次场景进入状态。默认交付是一个 UTF-8 的 `storyboard.md`：每个 Clip 只包含详细镜头描述、按镜头排列的 Image Prompts，以及一份整体智能镜头 Prompt；对话仅提供实际文件链接。用户明确要求结构化数据时，才导出完整的 `schema_version=2.0` JSON。
 
 ## 连续性规则
 
@@ -36,7 +45,8 @@ Skill 在镜头规划阶段维护跨镜头状态：
 - 人物固定身份、服装和状态由共享实体与资产档案管理。
 - 场景门窗、家具和光源使用固定世界位置；反打只改变画面投影，不改变世界位置。
 - 人物位置、朝向、视线、身体朝向、持物、左右手、道具交接与损坏状态都在镜头入口和出口之间继承。
-- 静态 Image Prompt 只写关键帧时刻；Video Prompt 写完整动作过程，避免把不同时间阶段混为一帧。
+- 静态 Image Prompt 只写关键帧时刻；智能镜头 Prompt 写完整动作过程，避免把不同时间阶段混为一帧。
+- 场景多次进入时分别记录入口人物、灯光和空间状态；跨镜对白、旁白和音效按原文区间承接，不重复、不漏字、不擅自添加。
 - 缺失或无法核实的资产信息会标记为假设，不伪装成图像观察事实。
 
 ## 使用方式
@@ -45,7 +55,7 @@ Skill 在镜头规划阶段维护跨镜头状态：
 
 1. 剧本、场次或剧情段落。
 2. 角色、场景和道具的资产图，或明确的文字资产设定。
-3. 可选的风格、画幅、时长、镜头数和硬约束。
+3. 可选的原始对白／旁白／音效时间标注、风格、画幅、时长、镜头数和硬约束。
 
 提示词默认使用中文，便于直接交给中国 AI 图像和视频工具。
 
@@ -54,11 +64,11 @@ Skill 在镜头规划阶段维护跨镜头状态：
 ```text
 generator/
 ├── SKILL.md
-├── references/   # 剧本解析、拆镜、摄影、调度、连续性与提示词转写规则
-├── templates/    # 输入、中间产物、Shot Spec 和最终输出的数据契约
-└── evals/        # 场景、对话、动作、资产歧义与 Spec→Prompt 保真评测
+├── references/   # 剧本、时间线、Clip、摄影、调度、连续性与提示词转写规则
+├── templates/    # 输入、时间线、Clip Plan、Shot Spec 和输出数据契约
+└── evals/        # 场景、对话、动作、资产歧义、Clip 与 Spec→Prompt 评测
 ```
 
 ## 验证
 
-项目包含 JSON Schema、跨镜状态契约和行为评测用例。验证记录见 [generator-verification.md](generator-verification.md)。
+项目包含 JSON Schema、冻结时间线与跨镜状态契约，以及声音、Clip 分组、快切和 Spec→Prompt 保真评测用例。验证记录见 [generator-verification.md](generator-verification.md)。
